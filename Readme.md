@@ -44,3 +44,40 @@ JMSSerializer should be registered before rest-bundle
     FOS\RestBundle\FOSRestBundle::class => ['all' => true],
 ```
 
+## Rest API
+```
+composer require annotations
+```
+
+```fos_rest.yaml
+fos_rest:
+  param_fetcher_listener: true
+  body_listener: true
+  format_listener:
+    enabled: true
+    rules:
+      - { path: '^/api', priorities: ['json', 'xml'], fallback_format: 'html' }
+  versioning: true
+  view:
+    jsonp_handler: ~
+    view_response_listener: 'force'
+```
+
+```
+class MoviesController extends FOSRestController
+{
+//    use ControllerTrait;
+
+    /**
+     * @Rest\Route("/api/movies", name="api_movies")
+     * @Rest\View()
+     */
+    public function getMoviesAction() {
+        $movies = $this->getDoctrine()->getRepository('App:Movie')->findAll();
+        $view = $this->view($movies, 200);
+
+        return $this->handleView($view);
+    }
+}
+```
+
