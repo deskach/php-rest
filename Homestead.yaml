@@ -9,10 +9,12 @@ folders:
     -
         map: /Users/dzianis/src/study/php-rest
         to: /home/vagrant/code
+#        type: "rsync"
 sites:
     -
         map: movies.local
         to: /home/vagrant/code/public
+#        type: symfony
 databases:
     - homestead
 name: php-rest
