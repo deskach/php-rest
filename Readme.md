@@ -28,3 +28,19 @@ php bin/console doctrine:migrations:migrate
 ```$xslt
 php bin/console doctrine:fixtures:load
 ```
+
+## REST bundles
+
+```$xslt
+composer require friendsofsymfony/rest-bundle
+composer require jms/serializer-bundle
+```
+
+JMSSerializer should be registered before rest-bundle
+
+```$xslt
+    ...
+    JMS\SerializerBundle\JMSSerializerBundle::class => ['all' => true],
+    FOS\RestBundle\FOSRestBundle::class => ['all' => true],
+```
+
