@@ -21,6 +21,7 @@
 fos_rest:
   param_fetcher_listener: true
   body_listener: true
+  body_converter: true
   format_listener:
     enabled: true
     rules:
