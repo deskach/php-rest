@@ -32,6 +32,22 @@ class MoviesController extends FOSRestController
     }
 
     /**
+     * @Rest\Route("/api/movies/{movieId}", name="movies_find", methods={"GET"})
+     * @param string $movieId
+     * @return Response
+     * @Rest\View()
+     */
+    public function getMovieAction(string $movieId) {
+        $movie = $this->getDoctrine()->getRepository('App:Movie')->find($movieId);
+
+        if(null === $movie) {
+            return $this->handleView($this->view(null, 404));
+        }
+
+        return $this->handleView($this->view($movie, 200));
+    }
+
+    /**
      * @Rest\Route("/api/movies", name="movies_post", methods={"POST"})
      * @Rest\View(statusCode=201)
      * @ParamConverter("movie", converter="fos_rest.request_body")
