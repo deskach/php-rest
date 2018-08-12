@@ -10,16 +10,29 @@ namespace App\Controller;
 
 
 use App\Entity\Movie;
+use App\Exception\ValidationException;
+use Doctrine\ORM\Mapping as ORM;
 use FOS\RestBundle\Controller\Annotations as Rest;
 //use FOS\RestBundle\Controller\ControllerTrait;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MoviesController extends FOSRestController
 {
 //    use ControllerTrait;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $validator;
+
+    public function __construct(ValidatorInterface $aValidator)
+    {
+        $this->validator = $aValidator;
+    }
 
     /**
      * @Rest\Route("/api/movies", name="movies_get", methods={"GET"})
@@ -52,9 +65,20 @@ class MoviesController extends FOSRestController
      * @Rest\View(statusCode=201)
      * @ParamConverter("movie", converter="fos_rest.request_body")
      * @param Movie $movie
-     * @return Movie
+     * @return Movie | Response
+     * @throws HttpException
      */
     public function postMoviesAction(Movie $movie) {
+        $errors = $this->validator->validate($movie);
+
+        if (count($errors) > 0) {
+//            $error1 = $errors->get(0);
+//            $message = $error1->getPropertyPath()." ".$error1->getMessage();
+//
+//            throw new HttpException(400, $message);
+            throw new ValidationException($errors);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($movie);
         $em->flush();
