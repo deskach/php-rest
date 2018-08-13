@@ -69,15 +69,7 @@ class MoviesController extends FOSRestController
      * @throws HttpException
      */
     public function postMoviesAction(Movie $movie) {
-        $errors = $this->validator->validate($movie);
-
-        if (count($errors) > 0) {
-//            $error1 = $errors->get(0);
-//            $message = $error1->getPropertyPath()." ".$error1->getMessage();
-//
-//            throw new HttpException(400, $message);
-            throw new ValidationException($errors);
-        }
+        $this->validate($movie);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($movie);
@@ -104,5 +96,20 @@ class MoviesController extends FOSRestController
         $em->flush();
 
         return $this->handleView($this->view(null, 202));
+    }
+
+    /**
+     * @param Movie $movie
+     */
+    private function validate(Movie $movie) {
+        $errors = $this->validator->validate($movie);
+
+        if (count($errors) > 0) {
+//            $error1 = $errors->get(0);
+//            $message = $error1->getPropertyPath()." ".$error1->getMessage();
+//
+//            throw new HttpException(400, $message);
+            throw new ValidationException($errors);
+        }
     }
 }
