@@ -10,6 +10,7 @@ namespace App\Controller;
 
 
 use App\Entity\Movie;
+use App\Entity\Role;
 use App\Exception\ValidationException;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -79,8 +80,8 @@ class MoviesController extends FOSRestController
     }
 
     /**
-     * @Rest\Route("/api/movies/{movieId}", name="movies_delete", methods={"DELETE"})
      * @Rest\View()
+     * @Rest\Route("/api/movies/{movieId}", name="movies_delete", methods={"DELETE"})
      * @param string $movieId
      * @return Response
      */
@@ -96,6 +97,41 @@ class MoviesController extends FOSRestController
         $em->flush();
 
         return $this->handleView($this->view(null, 202));
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Route("/api/movies/{movieId}/roles", name="movies_roles_get", methods={"GET"})
+     * @param Movie|null $movie
+     * @return \Doctrine\Common\Collections\Collection|Response
+     */
+    public function getMovieRolesAction(?Movie $movie) {
+        if (null === $movie) {
+            return $this->handleView($this->view(null, 404));
+        }
+
+        return $movie->getRoles();
+    }
+
+    /**
+     * @Rest\View(statusCode=201)
+     * @ParamConverter("role", converter="fos_rest.request_body")
+     * @Rest\Route("/api/movies/{movieId}/roles", name="movies_roles_post", methods={"POST"})
+     * @param Movie $movie
+     * @param Role $role
+     * @return Role
+     */
+    public function postMovieRolesAction(Movie $movie, Role $role) {
+        $em = $this->getDoctrine()->getManager();
+
+        $role->setMovie($movie);
+        $em->persist($role);
+        $movie->getRoles()->add($role);
+
+        $em->persist($movie);
+        $em->flush();
+
+        return $role;
     }
 
     /**

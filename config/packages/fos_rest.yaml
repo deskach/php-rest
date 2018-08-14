@@ -27,8 +27,8 @@ fos_rest:
     validation_errors_argument: validationErrors
   exception:
     enabled: true
-#    exception_controller: 'fos_rest.exception.controller:showAction'
-    exception_controller: 'App\Controller\ExceptionController::showAction'
+    exception_controller: 'fos_rest.exception.controller:showAction'
+#    exception_controller: 'App\Controller\ExceptionController::showAction'
   format_listener:
     enabled: true
     rules:
